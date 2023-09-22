@@ -191,6 +191,7 @@
             ButtonAdd.TabIndex = 0;
             ButtonAdd.Text = "Add";
             ButtonAdd.UseVisualStyleBackColor = true;
+            ButtonAdd.Click += ButtonAdd_Click;
             // 
             // GroupBoxFileControls
             // 
