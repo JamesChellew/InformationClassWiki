@@ -1,8 +1,8 @@
 namespace InformationClassWiki
 {
-    public partial class Form1 : Form
+    public partial class InformationClassWiki : Form
     {
-        public Form1()
+        public InformationClassWiki()
         {
             InitializeComponent();
         }
