@@ -8,12 +8,26 @@ namespace InformationClassWiki
 {
     internal class Information : IComparable<Information>
     {
-        // Private initial variables
+        #region Private Properties
         private string name;
-        private string category;
-        private string structure;
-        private string definition;
+        private string? category;
+        private string? structure;
+        private string? definition;
+        #endregion
 
+        public Information(string name) 
+        { 
+            this.name = name; 
+        }
+        public Information(string name, string category, string structure, string definition)
+        {
+                SetName(name);
+                SetCategory(category);
+                SetStructure(structure);
+                SetDefinition(definition);
+        }
+
+        #region Getters and Setters
         // get; set; Name
         public string GetName()
         {
@@ -32,7 +46,7 @@ namespace InformationClassWiki
         {
             this.category = category;
         }
-        // get; set; Strucure
+        // get; set; Structure
         public string GetStructure()
         {
             return structure;
@@ -42,7 +56,7 @@ namespace InformationClassWiki
             this.structure = structure;
         }
         // get; set; Definition
-        public string GetDefition()
+        public string GetDefinition()
         {
             return definition;
         }
@@ -50,7 +64,7 @@ namespace InformationClassWiki
         {
             this.definition = definition;
         }
-
+        #endregion
         public int CompareTo(Information other)
         {
             return this.GetName().CompareTo(other.GetName());
