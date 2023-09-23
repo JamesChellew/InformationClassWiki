@@ -230,6 +230,7 @@
             ButtonSave.TabIndex = 1;
             ButtonSave.Text = "Save";
             ButtonSave.UseVisualStyleBackColor = true;
+            ButtonSave.Click += ButtonSave_Click;
             // 
             // ButtonOpen
             // 
@@ -240,6 +241,7 @@
             ButtonOpen.TabIndex = 0;
             ButtonOpen.Text = "Open";
             ButtonOpen.UseVisualStyleBackColor = true;
+            ButtonOpen.Click += ButtonOpen_Click;
             // 
             // GroupBoxClear
             // 
@@ -300,11 +302,13 @@
             ListViewWiki.Columns.AddRange(new ColumnHeader[] { ColumnName, ColumnCategory, ColumnStructure });
             ListViewWiki.Location = new Point(424, 61);
             ListViewWiki.Margin = new Padding(3, 2, 3, 2);
+            ListViewWiki.MultiSelect = false;
             ListViewWiki.Name = "ListViewWiki";
             ListViewWiki.Size = new Size(266, 288);
             ListViewWiki.TabIndex = 9;
             ListViewWiki.UseCompatibleStateImageBehavior = false;
             ListViewWiki.View = View.Details;
+            ListViewWiki.SelectedIndexChanged += ListViewWiki_SelectedIndexChanged;
             // 
             // ColumnName
             // 

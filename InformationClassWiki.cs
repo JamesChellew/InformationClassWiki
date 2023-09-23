@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 
 namespace InformationClassWiki
 {
@@ -78,6 +79,22 @@ namespace InformationClassWiki
                 ListViewWiki.Items.Add(displayItem);
             }
         } // Displays wiki<Information> contents.
+
+        private void DisplayItemData(Information item)
+        {
+            ClearFields();
+            TextBoxName.Text = item.GetName();
+            ComboBoxCategory.Text = item.GetCategory();
+            if (item.GetStructure() == "Linear")
+            {
+                SetRadioSelection(0);
+            }
+            else
+            {
+                SetRadioSelection(1);
+            }
+            TextBoxDefinition.Text = item.GetDefinition();
+        }
 
         private void ClearFields()
         {
@@ -218,7 +235,7 @@ namespace InformationClassWiki
             if (!String.IsNullOrEmpty(searchTerm))
             {
                 int index = wiki.BinarySearch(searchItem);
-              
+
                 if (index > -1)
                 {
                     ListViewWiki.SelectedItems.Clear();
@@ -229,6 +246,86 @@ namespace InformationClassWiki
                     TextBoxFeedback.Text = "Cannot be found";
                 }
             }
+        }
+        private void ListViewWiki_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ListViewWiki.SelectedItems.Count > 0)
+            {
+                int index = ListViewWiki.SelectedIndices[0];
+                DisplayItemData(wiki[index]);
+            }
+        }
+        private void ButtonSave_Click(object sender, EventArgs e)
+        {
+            SavePrompt();
+        }
+        private void SavePrompt()
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "Bin Files|*.bin";
+            saveDialog.DefaultExt = "*.bin";
+            saveDialog.Title = "Choose Where to Save Wiki";
+            saveDialog.InitialDirectory = Application.StartupPath;
+
+            DialogResult result = saveDialog.ShowDialog();
+            string fileName = saveDialog.FileName;
+            if (result == DialogResult.OK)
+            {
+                SaveFile(fileName);
+            }
+            else
+            {
+                TextBoxFeedback.Text = "Save File Cancelled";
+            }
+        }
+        private void SaveFile(string fileName)
+        {
+            using FileStream fs = new FileStream(fileName, FileMode.Create);
+            using BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8, false);
+            foreach (Information x in wiki)
+            {
+                bw.Write(x.GetName());
+                bw.Write(x.GetCategory());
+                bw.Write(x.GetStructure());
+                bw.Write(x.GetDefinition());
+            }
+        }
+
+
+        private void ButtonOpen_Click(object sender, EventArgs e)
+        {
+            OpenPrompt();
+        }
+        private void OpenPrompt() 
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Filter = "Bin Files|*.bin";
+            openDialog.DefaultExt = ".bin";
+            openDialog.Title = "Choose a File to Load to Wiki";
+            openDialog.InitialDirectory = Application.StartupPath;
+
+            DialogResult result = openDialog.ShowDialog();
+            string fileName = openDialog.FileName;
+            if (result == DialogResult.OK)
+            {
+                OpenFile(fileName);
+            }
+            else
+            {
+                TextBoxFeedback.Text = "Open File Cancelled";
+            }
+
+        }
+        private void OpenFile(string fileName)
+        {
+            using FileStream fs = new FileStream (fileName, FileMode.Open);
+            using BinaryReader br = new BinaryReader(fs);
+            wiki.Clear();
+            while (fs.Position < fs.Length)
+            {
+                wiki.Add(new Information(br.ReadString(), br.ReadString(), br.ReadString(), br.ReadString()));
+            }
+            DisplayList();
         }
     }
 }
