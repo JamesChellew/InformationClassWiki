@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InformationClassWiki));
             TextBoxName = new TextBox();
             ComboBoxCategory = new ComboBox();
@@ -59,6 +60,7 @@
             TextBoxFeedback = new TextBox();
             label6 = new Label();
             label7 = new Label();
+            toolTip1 = new ToolTip(components);
             GroupBoxStructure.SuspendLayout();
             GroupBoxEditing.SuspendLayout();
             GroupBoxFileControls.SuspendLayout();
@@ -72,6 +74,7 @@
             TextBoxName.Name = "TextBoxName";
             TextBoxName.Size = new Size(225, 23);
             TextBoxName.TabIndex = 0;
+            TextBoxName.MouseDoubleClick += TextBoxName_MouseDoubleClick;
             // 
             // ComboBoxCategory
             // 
@@ -186,6 +189,7 @@
             ButtonDelete.TabIndex = 2;
             ButtonDelete.Text = "Delete";
             ButtonDelete.UseVisualStyleBackColor = true;
+            ButtonDelete.Click += ButtonDelete_Click;
             // 
             // ButtonEdit
             // 
@@ -196,6 +200,7 @@
             ButtonEdit.TabIndex = 1;
             ButtonEdit.Text = "Edit";
             ButtonEdit.UseVisualStyleBackColor = true;
+            ButtonEdit.Click += ButtonEdit_Click;
             // 
             // ButtonAdd
             // 
@@ -304,11 +309,14 @@
             ListViewWiki.Margin = new Padding(3, 2, 3, 2);
             ListViewWiki.MultiSelect = false;
             ListViewWiki.Name = "ListViewWiki";
+            ListViewWiki.ShowItemToolTips = true;
             ListViewWiki.Size = new Size(266, 288);
             ListViewWiki.TabIndex = 9;
+            toolTip1.SetToolTip(ListViewWiki, "Double Click an Item to Delete it");
             ListViewWiki.UseCompatibleStateImageBehavior = false;
             ListViewWiki.View = View.Details;
             ListViewWiki.SelectedIndexChanged += ListViewWiki_SelectedIndexChanged;
+            ListViewWiki.MouseDoubleClick += ListViewWiki_MouseDoubleClick;
             // 
             // ColumnName
             // 
@@ -430,5 +438,6 @@
         private ColumnHeader ColumnName;
         private ColumnHeader ColumnCategory;
         private ColumnHeader ColumnStructure;
+        private ToolTip toolTip1;
     }
 }

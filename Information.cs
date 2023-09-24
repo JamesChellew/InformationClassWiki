@@ -15,18 +15,6 @@ namespace InformationClassWiki
         private string? definition;
         #endregion
 
-        public Information(string name) 
-        { 
-            this.name = name; 
-        }
-        public Information(string name, string category, string structure, string definition)
-        {
-                SetName(name);
-                SetCategory(category);
-                SetStructure(structure);
-                SetDefinition(definition);
-        }
-
         #region Getters and Setters
         // get; set; Name
         public string GetName()
@@ -65,10 +53,26 @@ namespace InformationClassWiki
             this.definition = definition;
         }
         #endregion
+
+        #region Constructors
+        public Information(string name) // This Creates a temp object for Binary Search which uses the IComparable to compare names.
+        { 
+            SetName(name);
+        }
+        public Information(string name, string category, string structure, string definition)
+        {
+                SetName(name);
+                SetCategory(category);
+                SetStructure(structure);
+                SetDefinition(definition);
+        }
+        #endregion
+
+        #region CompareTo IComparable method
         public int CompareTo(Information other)
         {
             return this.GetName().CompareTo(other.GetName());
         }
+        #endregion
     }
-    
 }

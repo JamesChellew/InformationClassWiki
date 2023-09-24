@@ -9,13 +9,38 @@ namespace InformationClassWiki
         {
             InitializeComponent();
         }
-        // Global List for wiki
-        List<Information> wiki = new List<Information>();
+        #region Form Load
+        List<Information> wiki = new List<Information>(); // Global List for wiki
+        private void InformationClassWiki_Load(object sender, EventArgs e)
+        {
+            LoadComboBox();
+        } //Performs on load methods
+        private void LoadComboBox()
+        {
+            try
+            {
+                using FileStream file = new FileStream("Categories.txt", FileMode.Open);
+                using StreamReader sr = new StreamReader(file);
+                while (file.CanRead)
+                {
+                    string item = sr.ReadLine();
+                    ComboBoxCategory.Items.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        } // Load comboBox options from text file
+        #endregion
+        #region Style Text
         private string StyleText(string s)
         {
             TextInfo ti = new CultureInfo("en-US").TextInfo;
             return ti.ToTitleCase(s.Trim());
         }
+        #endregion
+        #region Radio Option Get and Set
         private string GetRadioSelection()
         {
             if (RadioButtonLinear.Checked)
@@ -48,25 +73,8 @@ namespace InformationClassWiki
                 RadioButtonNonLinear.Checked = false;
             }
         } // checks a radio 0 = linear, 1 = nonLinear, else neither.
-
-        private void LoadComboBox()
-        {
-            try
-            {
-                using FileStream file = new FileStream("Categories.txt", FileMode.Open);
-                using StreamReader sr = new StreamReader(file);
-                while (file.CanRead)
-                {
-                    string item = sr.ReadLine();
-                    ComboBoxCategory.Items.Add(item);
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        } // Load comboBox options from text file
-
+        #endregion
+        #region Display List and Items
         private void DisplayList()
         {
             ListViewWiki.Items.Clear();
@@ -79,7 +87,6 @@ namespace InformationClassWiki
                 ListViewWiki.Items.Add(displayItem);
             }
         } // Displays wiki<Information> contents.
-
         private void DisplayItemData(Information item)
         {
             ClearFields();
@@ -94,16 +101,16 @@ namespace InformationClassWiki
                 SetRadioSelection(1);
             }
             TextBoxDefinition.Text = item.GetDefinition();
-        }
-
-        private void ClearFields()
+        } // Display Item Information into entry fields
+        private void ListViewWiki_SelectedIndexChanged(object sender, EventArgs e)
         {
-            TextBoxName.Clear();
-            ComboBoxCategory.SelectedIndex = 0;
-            SetRadioSelection(-1);
-            TextBoxDefinition.Clear();
-        } // Clears the Input Fields 
-
+            if (ListViewWiki.SelectedItems.Count > 0)
+            {
+                int index = ListViewWiki.SelectedIndices[0];
+                DisplayItemData(wiki[index]);
+            }
+        }
+        #endregion
         #region Field Validations
         private bool IsNameEntered()
         {
@@ -173,6 +180,7 @@ namespace InformationClassWiki
             }
         }
         #endregion
+        #region Add
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
             string name = TextBoxName.Text;
@@ -198,6 +206,70 @@ namespace InformationClassWiki
                 TextBoxName.Focus();
             }
         } // Adds entry to list
+        #endregion
+        #region Delete
+        private void DeleteItem()
+        {
+            if (ListViewWiki.SelectedItems.Count > 0)
+            {
+                DialogResult delete = MessageBox.Show(
+                    "Are you sure you want to delete this item?",
+                    "Deletion Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (delete == DialogResult.Yes)
+                {
+                    Information item = wiki[ListViewWiki.SelectedIndices[0]];
+                    wiki.RemoveAt(ListViewWiki.SelectedIndices[0]);
+                    TextBoxFeedback.Text = $"{item.GetName()} was deleted";
+                    DisplayList();
+                }
+                else
+                {
+                    TextBoxFeedback.Text = "Did not delete selection";
+                }
+            }
+            else
+            {
+                TextBoxFeedback.Text = "No item selected to delete.";
+            }
+        } // Delete item at selected index
+        private void ButtonDelete_Click(object sender, EventArgs e)
+        {
+            DeleteItem();
+        }
+        private void ListViewWiki_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            DeleteItem();
+        }
+        #endregion
+        #region Edit
+        private void ButtonEdit_Click(object sender, EventArgs e)
+        {
+            if (ListViewWiki.SelectedItems.Count > 0)
+            {
+                int index = ListViewWiki.SelectedIndices[0];
+                Information item = wiki[index];
+                if (AllFieldsFilled())
+                {
+                    item.SetName(StyleText(TextBoxName.Text));
+                    item.SetCategory(ComboBoxCategory.Text);
+                    item.SetStructure(GetRadioSelection());
+                    item.SetDefinition(TextBoxDefinition.Text);
+                    wiki[index] = item;
+                    TextBoxFeedback.Text = "Item Edited";
+                    DisplayList();
+                }
+            }
+            else
+            {
+                TextBoxFeedback.Text = "Noting selected to edit";
+            }
+        }
+
+        #endregion
+
         private bool ValidName(string s) // dont know what to do with this yet.
         {
             foreach (Information item in wiki)
@@ -210,30 +282,37 @@ namespace InformationClassWiki
             return true;
         }
 
-        private void InformationClassWiki_Load(object sender, EventArgs e)
+        #region Clear and Reset
+        private void ClearFields()
         {
-            LoadComboBox();
-        } //Performs on load methods
-
+            TextBoxName.Clear();
+            ComboBoxCategory.SelectedIndex = 0;
+            SetRadioSelection(-1);
+            TextBoxDefinition.Clear();
+        } // Clears the Input Fields 
         private void ButtonClear_Click(object sender, EventArgs e)
         {
+            ListViewWiki.SelectedItems.Clear();
             ClearFields();
         } // ClearFields
-
         private void ButtonReset_Click(object sender, EventArgs e)
         {
             ListViewWiki.Items.Clear();
             wiki.Clear();
             ClearFields();
         } // ClearFields, Clear ListView, Clear List
-
+        private void TextBoxName_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ClearFields();
+        }
+        #endregion
+        #region Search
         private void ButtonSearch_Click(object sender, EventArgs e)
         {
-            TextInfo ti = new CultureInfo("en_AU").TextInfo;
-            string searchTerm = ti.ToTitleCase(TextBoxSearch.Text.Trim());
-            Information searchItem = new Information(searchTerm);
+            string searchTerm = StyleText(TextBoxSearch.Text);
             if (!String.IsNullOrEmpty(searchTerm))
             {
+                Information searchItem = new Information(searchTerm);
                 int index = wiki.BinarySearch(searchItem);
 
                 if (index > -1)
@@ -247,14 +326,8 @@ namespace InformationClassWiki
                 }
             }
         }
-        private void ListViewWiki_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ListViewWiki.SelectedItems.Count > 0)
-            {
-                int index = ListViewWiki.SelectedIndices[0];
-                DisplayItemData(wiki[index]);
-            }
-        }
+        #endregion
+        #region Save File
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             SavePrompt();
@@ -290,13 +363,13 @@ namespace InformationClassWiki
                 bw.Write(x.GetDefinition());
             }
         }
-
-
+        #endregion
+        #region Open File
         private void ButtonOpen_Click(object sender, EventArgs e)
         {
             OpenPrompt();
         }
-        private void OpenPrompt() 
+        private void OpenPrompt()
         {
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Filter = "Bin Files|*.bin";
@@ -318,7 +391,7 @@ namespace InformationClassWiki
         }
         private void OpenFile(string fileName)
         {
-            using FileStream fs = new FileStream (fileName, FileMode.Open);
+            using FileStream fs = new FileStream(fileName, FileMode.Open);
             using BinaryReader br = new BinaryReader(fs);
             wiki.Clear();
             while (fs.Position < fs.Length)
@@ -327,5 +400,7 @@ namespace InformationClassWiki
             }
             DisplayList();
         }
+        #endregion
+
     }
 }
