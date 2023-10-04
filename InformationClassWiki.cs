@@ -265,6 +265,10 @@ namespace InformationClassWiki
                     TextBoxFeedback.Text = "Item Edited";
                     DisplayList();
                 }
+                if(!ValidName(name))
+                {
+                    MessageBox.Show("Cannot change data as that name already exists in the Wiki", "Name Already Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             else
             {
@@ -397,7 +401,11 @@ namespace InformationClassWiki
         #region Form Closing
         private void InformationClassWiki_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DialogResult result = MessageBox.Show("Your information will be lost\n\nWould you like to save before exiting?", "Exit Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show(
+                "Your information will be lost\n\nWould you like to save before exiting?",
+                "Exit Confirmation", 
+                MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Warning);
             if (result == DialogResult.Yes)
             {
                 bool saveAndClose = SavePrompt();
@@ -405,12 +413,7 @@ namespace InformationClassWiki
                 {
                     e.Cancel = true;
                 }
-            }
-            else
-            {
-                e.Cancel = true;
-            }
-            
+            }    
         }
         #endregion
     }
