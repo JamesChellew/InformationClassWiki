@@ -396,6 +396,7 @@
             Margin = new Padding(3, 2, 3, 2);
             Name = "InformationClassWiki";
             Text = "Information Class Wiki";
+            FormClosing += InformationClassWiki_FormClosing;
             Load += InformationClassWiki_Load;
             GroupBoxStructure.ResumeLayout(false);
             GroupBoxStructure.PerformLayout();

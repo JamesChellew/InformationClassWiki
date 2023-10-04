@@ -34,7 +34,7 @@ namespace InformationClassWiki
         } // Load comboBox options from text file
         #endregion
         #region Style Text
-        private string StyleText(string s)
+        private string StyleText(string s) // Return text in Title Case
         {
             TextInfo ti = new CultureInfo("en-US").TextInfo;
             return ti.ToTitleCase(s.Trim());
@@ -109,9 +109,9 @@ namespace InformationClassWiki
                 int index = ListViewWiki.SelectedIndices[0];
                 DisplayItemData(wiki[index]);
             }
-        }
+        } //Checks for selection event
         #endregion
-        #region Field Validations
+        #region Validations
         private bool IsNameEntered()
         {
             if (String.IsNullOrWhiteSpace(TextBoxName.Text))
@@ -179,20 +179,23 @@ namespace InformationClassWiki
                 return false;
             }
         }
+        private bool ValidName(string s) // Returns true if there are no matching names in wiki
+        {
+            return !wiki.Exists(x => x.GetName().Equals(s));
+        }
         #endregion
         #region Add
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
-            string name = TextBoxName.Text;
+            string name = StyleText(TextBoxName.Text);
             string category = ComboBoxCategory.Text;
             string structure = GetRadioSelection();
             string definition = TextBoxDefinition.Text;
-            name = StyleText(name);
-            Information addItem = new Information(name, category, structure, definition);
+            Information item = new Information(name, category, structure, definition);
 
-            if (AllFieldsFilled() && !wiki.Exists(x => x.CompareTo(addItem) == 0))
+            if (AllFieldsFilled() && ValidName(item.GetName()))
             {
-                wiki.Add(addItem);
+                wiki.Add(item);
                 DisplayList();
             }
             else
@@ -238,11 +241,11 @@ namespace InformationClassWiki
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
             DeleteItem();
-        }
+        } // Delete on button click event
         private void ListViewWiki_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             DeleteItem();
-        }
+        } // delete on list view double click event
         #endregion
         #region Edit
         private void ButtonEdit_Click(object sender, EventArgs e)
@@ -251,9 +254,10 @@ namespace InformationClassWiki
             {
                 int index = ListViewWiki.SelectedIndices[0];
                 Information item = wiki[index];
-                if (AllFieldsFilled())
+                string name = StyleText(TextBoxName.Text);
+                if (AllFieldsFilled() && ValidName(name))
                 {
-                    item.SetName(StyleText(TextBoxName.Text));
+                    item.SetName(StyleText(name));
                     item.SetCategory(ComboBoxCategory.Text);
                     item.SetStructure(GetRadioSelection());
                     item.SetDefinition(TextBoxDefinition.Text);
@@ -269,19 +273,27 @@ namespace InformationClassWiki
         }
 
         #endregion
-
-        private bool ValidName(string s) // dont know what to do with this yet.
+        #region Search
+        private void ButtonSearch_Click(object sender, EventArgs e)
         {
-            foreach (Information item in wiki)
+            string searchTerm = StyleText(TextBoxSearch.Text);
+            if (!String.IsNullOrEmpty(searchTerm))
             {
-                if (s == item.GetName())
+                Information searchItem = new Information(searchTerm);
+                int index = wiki.BinarySearch(searchItem);
+
+                if (index > -1)
                 {
-                    return false;
+                    ListViewWiki.SelectedItems.Clear();
+                    ListViewWiki.Items[index].Selected = true;
+                }
+                else
+                {
+                    TextBoxFeedback.Text = "Cannot be found";
                 }
             }
-            return true;
         }
-
+        #endregion
         #region Clear and Reset
         private void ClearFields()
         {
@@ -306,33 +318,12 @@ namespace InformationClassWiki
             ClearFields();
         }
         #endregion
-        #region Search
-        private void ButtonSearch_Click(object sender, EventArgs e)
-        {
-            string searchTerm = StyleText(TextBoxSearch.Text);
-            if (!String.IsNullOrEmpty(searchTerm))
-            {
-                Information searchItem = new Information(searchTerm);
-                int index = wiki.BinarySearch(searchItem);
-
-                if (index > -1)
-                {
-                    ListViewWiki.SelectedItems.Clear();
-                    ListViewWiki.Items[index].Selected = true;
-                }
-                else
-                {
-                    TextBoxFeedback.Text = "Cannot be found";
-                }
-            }
-        }
-        #endregion
         #region Save File
         private void ButtonSave_Click(object sender, EventArgs e)
         {
             SavePrompt();
         }
-        private void SavePrompt()
+        private bool SavePrompt()
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "Bin Files|*.bin";
@@ -345,10 +336,12 @@ namespace InformationClassWiki
             if (result == DialogResult.OK)
             {
                 SaveFile(fileName);
+                return true;
             }
             else
             {
                 TextBoxFeedback.Text = "Save File Cancelled";
+                return false;
             }
         }
         private void SaveFile(string fileName)
@@ -401,6 +394,24 @@ namespace InformationClassWiki
             DisplayList();
         }
         #endregion
-
+        #region Form Closing
+        private void InformationClassWiki_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Your information will be lost\n\nWould you like to save before exiting?", "Exit Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                bool saveAndClose = SavePrompt();
+                if (!saveAndClose)
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+            
+        }
+        #endregion
     }
 }
