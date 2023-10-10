@@ -8,6 +8,7 @@ namespace InformationClassWiki
 {
     internal class Information : IComparable<Information>
     {
+        // 6.1
         #region Private Properties
         private string name;
         private string? category;
@@ -21,36 +22,36 @@ namespace InformationClassWiki
         {
             return name;
         }
-        public void SetName(string name)
+        public void SetName(string _name)
         {
-            this.name = name;
+            this.name = _name;
         }
         // get; set; Category
         public string GetCategory()
         {
             return category;
         }
-        public void SetCategory(string category)
+        public void SetCategory(string _category)
         {
-            this.category = category;
+            this.category = _category;
         }
         // get; set; Structure
         public string GetStructure()
         {
             return structure;
         }
-        public void SetStructure(string structure)
+        public void SetStructure(string _structure)
         {
-            this.structure = structure;
+            this.structure = _structure;
         }
         // get; set; Definition
         public string GetDefinition()
         {
             return definition;
         }
-        public void SetDefinition(string definition)
+        public void SetDefinition(string _definition)
         {
-            this.definition = definition;
+            this.definition = _definition;
         }
         #endregion
 
