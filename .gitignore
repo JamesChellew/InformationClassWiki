@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Allow
+!/bin/Debug/net7.0-windows/Categories.txt
+!/bin/Debug/net7.0-windows/Definitions.bin

@@ -221,6 +221,7 @@ namespace InformationClassWiki
                     wiki[index] = item;
                     TextBoxFeedback.Text = "Item Edited";
                     DisplayList();
+                    return;
                 }
                 if (!ValidName(name))
                 {
