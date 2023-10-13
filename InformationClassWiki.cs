@@ -12,7 +12,7 @@ namespace InformationClassWiki
             InitializeComponent();
         }
         #region Form Load Q6.2, 6.4
-        List<Information> wiki = new List<Information>(); // 6.2 Global List for wiki
+        List<Information> wiki = new(); // 6.2 Global List for wiki
         private void InformationClassWiki_Load(object sender, EventArgs e)
         {
             LoadComboBox();
@@ -27,13 +27,7 @@ namespace InformationClassWiki
         } // Reads all lines from file and puts it into the combobox
         // Modified to take less lines based on Code from course resources.
         #endregion
-        #region Style Text
-        private string StyleText(string s) // Return text in Title Case
-        {
-            TextInfo ti = new CultureInfo("en-US").TextInfo;
-            return ti.ToTitleCase(s.Trim());
-        }
-        #endregion // This probably could be put in the Information class.
+        
         #region Radio Option Get and Set Q6.6
         private string GetRadioSelection()
         {
@@ -76,7 +70,7 @@ namespace InformationClassWiki
             wiki.Sort();
             foreach (Information w in wiki)
             {
-                ListViewItem displayItem = new ListViewItem(w.GetName());
+                ListViewItem displayItem = new(w.GetName());
                 displayItem.SubItems.Add(w.GetCategory());
                 displayItem.SubItems.Add(w.GetStructure());
                 ListViewWiki.Items.Add(displayItem);
@@ -151,13 +145,17 @@ namespace InformationClassWiki
         #region Add Q6.3
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
-            string name = StyleText(TextBoxName.Text); // for clarity
+            string name = TextBoxName.Text; // for clarity
             string category = ComboBoxCategory.Text;
             string structure = GetRadioSelection();
             string definition = TextBoxDefinition.Text;
             if (AllFieldsFilled() && ValidName(name))
             {
-                Information item = new Information(name, category, structure, definition);
+                Information item = new();
+                item.SetName(name);
+                item.SetCategory(category);
+                item.SetStructure(structure);
+                item.SetDefinition(definition);
                 wiki.Add(item);
                 TextBoxFeedback.Text = $"{item.GetName()} Was Added";
                 DisplayList();
@@ -181,10 +179,8 @@ namespace InformationClassWiki
             if (ListViewWiki.SelectedItems.Count > 0)
             {
                 DialogResult delete = MessageBox.Show
-                    ("Are you sure you want to delete this item?",
-                    "Deletion Confirmation",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    ("Are you sure you want to delete this item?", "Deletion Confirmation",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (delete == DialogResult.Yes)
                 {
                     wiki.RemoveAt(ListViewWiki.SelectedIndices[0]);
@@ -210,14 +206,14 @@ namespace InformationClassWiki
             if (ListViewWiki.SelectedItems.Count > 0)
             {
                 int index = ListViewWiki.SelectedIndices[0];
-                Information item = wiki[index];
-                string name = StyleText(TextBoxName.Text);
+                Information item = new();
+                item.SetName(TextBoxName.Text);
+                item.SetCategory(ComboBoxCategory.Text);
+                item.SetStructure(GetRadioSelection());
+                item.SetDefinition(TextBoxDefinition.Text);
+                string name = item.GetName();
                 if (AllFieldsFilled() && ValidName(name))
-                {
-                    item.SetName(StyleText(name));
-                    item.SetCategory(ComboBoxCategory.Text);
-                    item.SetStructure(GetRadioSelection());
-                    item.SetDefinition(TextBoxDefinition.Text);
+                {                    
                     wiki[index] = item;
                     TextBoxFeedback.Text = "Item Edited";
                     DisplayList();
@@ -237,12 +233,12 @@ namespace InformationClassWiki
         #region Search Q6.10
         private void ButtonSearch_Click(object sender, EventArgs e)
         {
-            string searchTerm = StyleText(TextBoxSearch.Text);
-            if (!String.IsNullOrEmpty(searchTerm))
+            string searchTerm = TextBoxSearch.Text;
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                Information searchItem = new Information(searchTerm);
+                Information searchItem = new();
+                searchItem.SetName(searchTerm);
                 int index = wiki.BinarySearch(searchItem);
-
                 if (index > -1)
                 {
                     ListViewWiki.SelectedItems.Clear();
@@ -286,11 +282,13 @@ namespace InformationClassWiki
         }
         private bool SavePrompt()
         {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.Filter = "Bin Files|*.bin";
-            saveDialog.DefaultExt = "*.bin";
-            saveDialog.Title = "Choose Where to Save Wiki";
-            saveDialog.InitialDirectory = Application.StartupPath;
+            SaveFileDialog saveDialog = new()
+            {
+                Filter = "Bin Files|*.bin",
+                DefaultExt = "*.bin",
+                Title = "Choose Where to Save Wiki",
+                InitialDirectory = Application.StartupPath
+            };
             DialogResult result = saveDialog.ShowDialog();
             string fileName = saveDialog.FileName;
             if (result == DialogResult.OK)
@@ -308,8 +306,8 @@ namespace InformationClassWiki
         {
             try
             {
-                using FileStream fs = new FileStream(fileName, FileMode.Create);
-                using BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8, false);
+                using FileStream fs = new(fileName, FileMode.Create);
+                using BinaryWriter bw = new(fs, Encoding.UTF8, false);
                 foreach (Information x in wiki)
                 {
                     bw.Write(x.GetName());
@@ -331,11 +329,13 @@ namespace InformationClassWiki
         }
         private void OpenPrompt()
         {
-            OpenFileDialog openDialog = new OpenFileDialog();
-            openDialog.Filter = "Bin Files|*.bin";
-            openDialog.DefaultExt = ".bin";
-            openDialog.Title = "Choose a File to Load to Wiki";
-            openDialog.InitialDirectory = Application.StartupPath;
+            OpenFileDialog openDialog = new()
+            {
+                Filter = "Bin Files|*.bin",
+                DefaultExt = ".bin",
+                Title = "Choose a File to Load to Wiki",
+                InitialDirectory = Application.StartupPath
+            };
             DialogResult result = openDialog.ShowDialog();
             string fileName = openDialog.FileName;
             if (result == DialogResult.OK)
@@ -351,12 +351,17 @@ namespace InformationClassWiki
         {
             try
             {
-                using FileStream fs = new FileStream(fileName, FileMode.Open);
-                using BinaryReader br = new BinaryReader(fs);
+                using FileStream fs = new(fileName, FileMode.Open);
+                using BinaryReader br = new(fs);
                 wiki.Clear();
                 while (fs.Position < fs.Length)
                 {
-                    wiki.Add(new Information(br.ReadString(), br.ReadString(), br.ReadString(), br.ReadString()));
+                    Information item = new();
+                    item.SetName(br.ReadString());
+                    item.SetCategory(br.ReadString());
+                    item.SetStructure(br.ReadString());
+                    item.SetDefinition(br.ReadString());
+                    wiki.Add(item);
                 }
                 DisplayList();
             }

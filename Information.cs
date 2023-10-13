@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace InformationClassWiki
 {
@@ -11,10 +13,18 @@ namespace InformationClassWiki
         // 6.1
         #region Private Properties
         private string name;
-        private string? category;
-        private string? structure;
-        private string? definition;
+        private string category;
+        private string structure;
+        private string definition;
         #endregion
+
+        #region Style Text
+        private string StyleText(string s) // Return text in Title Case
+        {
+            TextInfo ti = new CultureInfo("en-US").TextInfo;
+            return ti.ToTitleCase(s.Trim());
+        }
+        #endregion // This probably could be put in the Information class.
 
         #region Getters and Setters
         // get; set; Name
@@ -24,7 +34,14 @@ namespace InformationClassWiki
         }
         public void SetName(string _name)
         {
-            this.name = _name;
+            if (!string.IsNullOrWhiteSpace(_name))
+            {
+                this.name = StyleText(_name);
+            }
+            else
+            {
+                this.name = "default";
+            }
         }
         // get; set; Category
         public string GetCategory()
@@ -33,7 +50,14 @@ namespace InformationClassWiki
         }
         public void SetCategory(string _category)
         {
-            this.category = _category;
+            if (!string.IsNullOrWhiteSpace(_category))
+            {
+                this.category = _category;
+            }
+            else
+            {
+                this.category = "";
+            }
         }
         // get; set; Structure
         public string GetStructure()
@@ -42,7 +66,14 @@ namespace InformationClassWiki
         }
         public void SetStructure(string _structure)
         {
-            this.structure = _structure;
+            if (!string.IsNullOrWhiteSpace(_structure))
+            {
+                this.structure = _structure;
+            }
+            else
+            {
+                this.structure = "Linear";
+            }
         }
         // get; set; Definition
         public string GetDefinition()
@@ -51,21 +82,14 @@ namespace InformationClassWiki
         }
         public void SetDefinition(string _definition)
         {
-            this.definition = _definition;
-        }
-        #endregion
-
-        #region Constructors
-        public Information(string name) // This Creates a temp object for Binary Search which uses the IComparable to compare names.
-        { 
-            SetName(name);
-        }
-        public Information(string name, string category, string structure, string definition)
-        {
-                SetName(name);
-                SetCategory(category);
-                SetStructure(structure);
-                SetDefinition(definition);
+            if (!string.IsNullOrEmpty(_definition))
+            {
+                this.definition = _definition;
+            }
+            else
+            {
+                this.definition = "default";
+            }
         }
         #endregion
 
