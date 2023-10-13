@@ -49,7 +49,7 @@ namespace InformationClassWiki
         // Modified this so it will work if other options were added later.
         private void SetRadioSelection(int index)
         {
-            if (index > 0)
+            if (index >= 0)
             {
                 foreach (RadioButton radio in GroupBoxStructure.Controls.OfType<RadioButton>())
                 {
