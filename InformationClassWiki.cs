@@ -94,34 +94,26 @@ namespace InformationClassWiki
         } //Checks for selection event
         #endregion
         #region Validations Q6.5
-        private bool IsFieldFilled(string field)
-        {
-            if (string.IsNullOrWhiteSpace(field))
-            {
-                return false;
-            }
-            return true;
-        }
         private bool AllFieldsFilled()
         {
             bool filled = true;
             string errorMessage = "Please Enter the Following Fields:";
-            if (!IsFieldFilled(TextBoxName.Text))
+            if (!string.IsNullOrWhiteSpace(TextBoxName.Text))
             {
                 filled = false;
                 errorMessage += "\nName";
             }
-            if (!IsFieldFilled(ComboBoxCategory.Text))
+            if (!string.IsNullOrWhiteSpace(ComboBoxCategory.Text))
             {
                 filled = false;
                 errorMessage += "\nCategory";
             }
-            if (!IsFieldFilled(GetRadioSelection()))
+            if (!string.IsNullOrWhiteSpace(GetRadioSelection()))
             {
                 filled = false;
                 errorMessage += "\nStructure";
             }
-            if (!IsFieldFilled(TextBoxDefinition.Text))
+            if (!string.IsNullOrWhiteSpace(TextBoxDefinition.Text))
             {
                 filled = false;
                 errorMessage += "\nDefinition";
@@ -145,30 +137,21 @@ namespace InformationClassWiki
         #region Add Q6.3
         private void ButtonAdd_Click(object sender, EventArgs e)
         {
-            string name = TextBoxName.Text; // for clarity
-            string category = ComboBoxCategory.Text;
-            string structure = GetRadioSelection();
-            string definition = TextBoxDefinition.Text;
-            if (AllFieldsFilled() && ValidName(name))
+            Information item = new();
+            item.SetName(TextBoxName.Text);
+            item.SetCategory(ComboBoxCategory.Text);
+            item.SetStructure(GetRadioSelection());
+            item.SetDefinition(TextBoxDefinition.Text);
+            if (AllFieldsFilled() && ValidName(item.GetName()))
             {
-                Information item = new();
-                item.SetName(name);
-                item.SetCategory(category);
-                item.SetStructure(structure);
-                item.SetDefinition(definition);
                 wiki.Add(item);
                 TextBoxFeedback.Text = $"{item.GetName()} Was Added";
                 DisplayList();
                 return;
             }
-            if (!ValidName(name))
+            if (!ValidName(item.GetName()))
             {
-                MessageBox.Show(
-                    "Definition for this name already exists.\n\nPlease enter another name.",
-                    "Duplicate Entry",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                    );
+                MessageBox.Show("Definition for this name already exists.\n\nPlease enter another name.","Duplicate Entry",MessageBoxButtons.OK,MessageBoxIcon.Warning);
                 TextBoxName.Focus();
             }
         } // Q6.3 Adds entry to list
@@ -178,9 +161,7 @@ namespace InformationClassWiki
         {
             if (ListViewWiki.SelectedItems.Count > 0)
             {
-                DialogResult delete = MessageBox.Show
-                    ("Are you sure you want to delete this item?", "Deletion Confirmation",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult delete = MessageBox.Show("Are you sure you want to delete this item?","Deletion Confirmation",MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (delete == DialogResult.Yes)
                 {
                     wiki.RemoveAt(ListViewWiki.SelectedIndices[0]);
@@ -211,15 +192,14 @@ namespace InformationClassWiki
                 item.SetCategory(ComboBoxCategory.Text);
                 item.SetStructure(GetRadioSelection());
                 item.SetDefinition(TextBoxDefinition.Text);
-                string name = item.GetName();
-                if (AllFieldsFilled() && ValidName(name))
+                if (AllFieldsFilled() && ValidName(item.GetName()))
                 {                    
                     wiki[index] = item;
                     TextBoxFeedback.Text = "Item Edited";
                     DisplayList();
                     return;
                 }
-                if (!ValidName(name))
+                if (!ValidName(item.GetName()))
                 {
                     MessageBox.Show("Cannot change data as that name already exists in the Wiki", "Name Already Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
@@ -228,13 +208,13 @@ namespace InformationClassWiki
             {
                 TextBoxFeedback.Text = "Noting selected to edit";
             }
-        }
+        } // Selected index in list view will match list. Sets the attributes of that index to what is in the fields if they are valid
         #endregion
         #region Search Q6.10
         private void ButtonSearch_Click(object sender, EventArgs e)
         {
             string searchTerm = TextBoxSearch.Text;
-            if (!string.IsNullOrEmpty(searchTerm))
+            if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 Information searchItem = new();
                 searchItem.SetName(searchTerm);
@@ -248,6 +228,10 @@ namespace InformationClassWiki
                 {
                     TextBoxFeedback.Text = "Cannot be found";
                 }
+            }
+            else
+            {
+                TextBoxFeedback.Text = "Nothing was entered to search for";
             }
         }
         #endregion
@@ -381,8 +365,7 @@ namespace InformationClassWiki
                 MessageBoxIcon.Warning);
             if (result == DialogResult.Yes)
             {
-                bool saveAndClose = SavePrompt();
-                if (!saveAndClose)
+                if (!SavePrompt())
                 {
                     e.Cancel = true;
                 }

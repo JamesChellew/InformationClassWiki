@@ -88,7 +88,7 @@ namespace InformationClassWiki
             }
             else
             {
-                this.definition = "default";
+                this.definition = "Default";
             }
         }
         #endregion
