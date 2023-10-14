@@ -98,22 +98,22 @@ namespace InformationClassWiki
         {
             bool filled = true;
             string errorMessage = "Please Enter the Following Fields:";
-            if (!string.IsNullOrWhiteSpace(TextBoxName.Text))
+            if (string.IsNullOrWhiteSpace(TextBoxName.Text))
             {
                 filled = false;
                 errorMessage += "\nName";
             }
-            if (!string.IsNullOrWhiteSpace(ComboBoxCategory.Text))
+            if (string.IsNullOrWhiteSpace(ComboBoxCategory.Text))
             {
                 filled = false;
                 errorMessage += "\nCategory";
             }
-            if (!string.IsNullOrWhiteSpace(GetRadioSelection()))
+            if (string.IsNullOrWhiteSpace(GetRadioSelection()))
             {
                 filled = false;
                 errorMessage += "\nStructure";
             }
-            if (!string.IsNullOrWhiteSpace(TextBoxDefinition.Text))
+            if (string.IsNullOrWhiteSpace(TextBoxDefinition.Text))
             {
                 filled = false;
                 errorMessage += "\nDefinition";
