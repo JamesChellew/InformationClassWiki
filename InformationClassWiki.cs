@@ -166,6 +166,7 @@ namespace InformationClassWiki
                 {
                     wiki.RemoveAt(ListViewWiki.SelectedIndices[0]);
                     TextBoxFeedback.Text = "Selected Item was deleted";
+                    ClearFields();
                     DisplayList();
                 }
                 else { TextBoxFeedback.Text = "Did not delete selection"; }
