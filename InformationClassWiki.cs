@@ -2,6 +2,11 @@ using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Text;
 using System.Web;
+//
+// James Chellew 30071566
+// AT2 - Wiki using seperate information class
+// 18/10/2023
+//
 
 namespace InformationClassWiki
 {

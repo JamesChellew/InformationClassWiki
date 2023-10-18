@@ -6,6 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
+//
+// James Chellew 30071566
+// AT2 - Wiki using seperate information class
+// 18/10/2023
+//
+
 namespace InformationClassWiki
 {
     internal class Information : IComparable<Information>
