@@ -193,11 +193,12 @@ namespace InformationClassWiki
                 item.SetCategory(ComboBoxCategory.Text);
                 item.SetStructure(GetRadioSelection());
                 item.SetDefinition(TextBoxDefinition.Text);
-                if (AllFieldsFilled() && ValidName(item.GetName()))
+                if (AllFieldsFilled() && (ValidName(item.GetName()) || item.GetName() == wiki[index].GetName()))
                 {                    
                     wiki[index] = item;
                     TextBoxFeedback.Text = "Item Edited";
                     DisplayList();
+                    ClearFields();
                     return;
                 }
                 if (!ValidName(item.GetName()))
