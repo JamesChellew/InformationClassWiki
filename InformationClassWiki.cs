@@ -30,9 +30,9 @@ namespace InformationClassWiki
                 ComboBoxCategory.Items.Add(x);
             }
         } // Reads all lines from file and puts it into the combobox
-        // Modified to take less lines based on Code from course resources.
+          // Modified to take less lines based on Code from course resources.
         #endregion
-        
+
         #region Radio Option Get and Set Q6.6
         private string GetRadioSelection()
         {
@@ -156,7 +156,7 @@ namespace InformationClassWiki
             }
             if (!ValidName(item.GetName()))
             {
-                MessageBox.Show("Definition for this name already exists.\n\nPlease enter another name.","Duplicate Entry",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                MessageBox.Show("Definition for this name already exists.\n\nPlease enter another name.", "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 TextBoxName.Focus();
             }
         } // Q6.3 Adds entry to list
@@ -166,7 +166,7 @@ namespace InformationClassWiki
         {
             if (ListViewWiki.SelectedItems.Count > 0)
             {
-                DialogResult delete = MessageBox.Show("Are you sure you want to delete this item?","Deletion Confirmation",MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult delete = MessageBox.Show("Are you sure you want to delete this item?", "Deletion Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (delete == DialogResult.Yes)
                 {
                     wiki.RemoveAt(ListViewWiki.SelectedIndices[0]);
@@ -199,7 +199,7 @@ namespace InformationClassWiki
                 item.SetStructure(GetRadioSelection());
                 item.SetDefinition(TextBoxDefinition.Text);
                 if (AllFieldsFilled() && (ValidName(item.GetName()) || item.GetName() == wiki[index].GetName()))
-                {                    
+                {
                     wiki[index] = item;
                     TextBoxFeedback.Text = "Item Edited";
                     DisplayList();
